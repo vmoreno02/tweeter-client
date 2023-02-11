@@ -16,10 +16,6 @@ public class FollowTask extends AuthenticatedTask {
      * The user that is being followed.
      */
     private User followee;
-    /**
-     * Message handler that will receive task results.
-     */
-    private Handler messageHandler;
 
     public FollowTask(AuthToken authToken, User followee, Handler messageHandler) {
         super(messageHandler, authToken);
