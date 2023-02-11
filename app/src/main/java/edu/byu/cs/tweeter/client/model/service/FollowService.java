@@ -19,6 +19,8 @@ import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.GetFollowi
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.IsFollowerHandler;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.UnfollowHandler;
 import edu.byu.cs.tweeter.client.cache.Cache;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.ServiceObserver;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.SimpleNotificationObserver;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class FollowService {
@@ -30,20 +32,18 @@ public class FollowService {
         void addFollows(List<User> follows, boolean hasMorePages);
     }
 
-    public interface MainObserver {
-        void displayMessageFollow(String s);
+    public interface FollowObserver extends SimpleNotificationObserver {}
 
+    public interface UnfollowObserver extends SimpleNotificationObserver {}
+
+    public interface MainObserver extends ServiceObserver {
         void setFollow(boolean isFollower);
-
-        void updateSelectedUserFollowingAndFollowers();
-
-        void updateFollowButton(boolean b);
-
-        void enableFollowButton(boolean b);
 
         void setFollowerCount(int count);
 
         void setFolloweeCount(int count);
+
+        void displayMessageFollow(String message);
     }
 
     public void loadMoreFollowees(User user, int pageSize, User lastFollowee, Observer observer) {
@@ -67,14 +67,14 @@ public class FollowService {
         executor.execute(isFollowerTask);
     }
 
-    public void unfollow(User selectedUser, MainObserver observer) {
+    public void unfollow(User selectedUser, UnfollowObserver observer) {
         UnfollowTask unfollowTask = new UnfollowTask(Cache.getInstance().getCurrUserAuthToken(),
                 selectedUser, new UnfollowHandler(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(unfollowTask);
     }
 
-    public void follow(User selectedUser, MainObserver observer) {
+    public void follow(User selectedUser, FollowObserver observer) {
         FollowTask followTask = new FollowTask(Cache.getInstance().getCurrUserAuthToken(),
                 selectedUser, new FollowHandler(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();

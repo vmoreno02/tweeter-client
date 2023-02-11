@@ -53,11 +53,11 @@ public class MainPresenter {
     }
 
     public void unfollow(User selectedUser) {
-        followService.unfollow(selectedUser, new MainObserver());
+        followService.unfollow(selectedUser, new UnfollowObserver());
     }
 
     public void follow(User selectedUser) {
-        followService.follow(selectedUser, new MainObserver());
+        followService.follow(selectedUser, new FollowObserver());
     }
 
     public void logout() {
@@ -140,32 +140,54 @@ public class MainPresenter {
         return containedMentions;
     }
 
-    private class MainObserver implements FollowService.MainObserver, UserService.MainObserver, StatusService.MainObserver {
+    private class UnfollowObserver implements FollowService.UnfollowObserver {
 
         @Override
-        public void displayMessageFollow(String s) {
-            view.displayMessage(s);
+        public void handleSuccess() {
+            view.updateSUFAF();
+            view.followButtonUpdate(true);
+            view.enableFollowButton(true);
         }
 
+        @Override
+        public void handleFailure(String message) {
+            view.displayMessage("Failed to unfollow: " + message);
+            view.enableFollowButton(true);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            view.displayMessage("Failed to unfollow because of exception: " + exception.getMessage());
+            view.enableFollowButton(true);
+        }
+    }
+    private class FollowObserver implements FollowService.FollowObserver {
+
+        @Override
+        public void handleSuccess() {
+            view.updateSUFAF();
+            view.followButtonUpdate(false);
+            view.enableFollowButton(true);
+        }
+
+        @Override
+        public void handleFailure(String message) {
+            view.displayMessage("Failed to follow: " + message);
+            view.enableFollowButton(true);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            view.displayMessage(exception.getMessage());
+            view.enableFollowButton(true);
+        }
+    }
+
+    private class MainObserver implements FollowService.MainObserver, UserService.MainObserver, StatusService.MainObserver {
 
         @Override
         public void setFollow(boolean isFollower) {
             view.setFollow(isFollower);
-        }
-
-        @Override
-        public void updateSelectedUserFollowingAndFollowers() {
-            view.updateSUFAF();
-        }
-
-        @Override
-        public void updateFollowButton(boolean b) {
-            view.followButtonUpdate(b);
-        }
-
-        @Override
-        public void enableFollowButton(boolean b) {
-            view.enableFollowButton(b);
         }
 
         @Override
@@ -179,8 +201,23 @@ public class MainPresenter {
         }
 
         @Override
+        public void displayMessageFollow(String message) {
+
+        }
+
+        @Override
         public void displayMessage(String s) {
             view.displayMessage(s);
+        }
+
+        @Override
+        public void handleFailure(String message) {
+            displayMessage(message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            displayMessage(exception.getMessage());
         }
 
         @Override
