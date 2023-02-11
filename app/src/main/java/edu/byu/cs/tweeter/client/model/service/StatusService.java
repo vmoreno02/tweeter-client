@@ -11,6 +11,7 @@ import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.GetFeedHan
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.GetStoryHandler;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.PostStatusHandler;
 import edu.byu.cs.tweeter.client.cache.Cache;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.SimpleNotificationObserver;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -22,11 +23,8 @@ public class StatusService {
         void displayMessage(String s);
     }
 
-    public interface MainObserver {
-        void displayMessage(String s);
-
-        void cancelPostingToast();
-    }
+    public interface PostStatusObserver extends SimpleNotificationObserver {}
+    
     public void loadMoreStatuses(User user, int pageSize, Status lastStatus, Observer observer) {
         GetFeedTask getFeedTask = new GetFeedTask(Cache.getInstance().getCurrUserAuthToken(),
                 user, pageSize, lastStatus, new GetFeedHandler(observer));
@@ -41,7 +39,7 @@ public class StatusService {
         executor.execute(getStoryTask);
     }
 
-    public void postStatus(Status newStatus, MainObserver observer) {
+    public void postStatus(Status newStatus, PostStatusObserver observer) {
         PostStatusTask statusTask = new PostStatusTask(Cache.getInstance().getCurrUserAuthToken(),
                 newStatus, new PostStatusHandler(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();

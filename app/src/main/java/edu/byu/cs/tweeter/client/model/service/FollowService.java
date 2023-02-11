@@ -19,6 +19,7 @@ import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.GetFollowi
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.IsFollowerHandler;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.UnfollowHandler;
 import edu.byu.cs.tweeter.client.cache.Cache;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.GetDataObserver;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.ServiceObserver;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.SimpleNotificationObserver;
 import edu.byu.cs.tweeter.model.domain.User;
@@ -36,15 +37,11 @@ public class FollowService {
 
     public interface UnfollowObserver extends SimpleNotificationObserver {}
 
-    public interface MainObserver extends ServiceObserver {
-        void setFollow(boolean isFollower);
+    public interface IsFollowerObserver extends GetDataObserver<Boolean> {}
 
-        void setFollowerCount(int count);
+    public interface GetFollowersCountObserver extends GetDataObserver<Integer> {}
 
-        void setFolloweeCount(int count);
-
-        void displayMessageFollow(String message);
-    }
+    public interface GetFollowingCountObserver extends GetDataObserver<Integer> {}
 
     public void loadMoreFollowees(User user, int pageSize, User lastFollowee, Observer observer) {
         GetFollowingTask getFollowingTask = new GetFollowingTask(Cache.getInstance().getCurrUserAuthToken(),
@@ -60,7 +57,7 @@ public class FollowService {
         executor.execute(getFollowersTask);
     }
 
-    public void isFollower(User selectedUser, MainObserver observer) {
+    public void isFollower(User selectedUser, IsFollowerObserver observer) {
         IsFollowerTask isFollowerTask = new IsFollowerTask(Cache.getInstance().getCurrUserAuthToken(),
                 Cache.getInstance().getCurrUser(), selectedUser, new IsFollowerHandler(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -81,13 +78,13 @@ public class FollowService {
         executor.execute(followTask);
     }
 
-    public void getFollowersCount(User selectedUser, ExecutorService executor, MainObserver observer) {
+    public void getFollowersCount(User selectedUser, ExecutorService executor, FollowService.GetFollowersCountObserver observer) {
         GetFollowersCountTask followersCountTask = new GetFollowersCountTask(Cache.getInstance().getCurrUserAuthToken(),
                 selectedUser, new GetFollowersCountHandler(observer));
         executor.execute(followersCountTask);
     }
 
-    public void getFollowingCount(User selectedUser, ExecutorService executor, MainObserver observer) {
+    public void getFollowingCount(User selectedUser, ExecutorService executor, GetFollowingCountObserver observer) {
         GetFollowingCountTask followingCountTask = new GetFollowingCountTask(Cache.getInstance().getCurrUserAuthToken(),
                 selectedUser, new GetFollowingCountHandler(observer));
         executor.execute(followingCountTask);

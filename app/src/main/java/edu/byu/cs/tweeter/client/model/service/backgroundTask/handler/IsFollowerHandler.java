@@ -1,5 +1,6 @@
 package edu.byu.cs.tweeter.client.model.service.backgroundTask.handler;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -8,27 +9,16 @@ import androidx.annotation.NonNull;
 
 import edu.byu.cs.tweeter.client.model.service.FollowService;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.IsFollowerTask;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.GetDataObserver;
 
-public class IsFollowerHandler extends Handler {
-    private FollowService.MainObserver observer;
-
-    public IsFollowerHandler(FollowService.MainObserver observer) {
-        super(Looper.getMainLooper());
-        this.observer = observer;
+public class IsFollowerHandler extends BackgroundTaskHandler<GetDataObserver<Boolean>> {
+    public IsFollowerHandler(FollowService.IsFollowerObserver observer) {
+        super(observer);
     }
 
     @Override
-    public void handleMessage(@NonNull Message msg) {
-        boolean success = msg.getData().getBoolean(IsFollowerTask.SUCCESS_KEY);
-        if (success) {
-            boolean isFollower = msg.getData().getBoolean(IsFollowerTask.IS_FOLLOWER_KEY);
-            observer.setFollow(isFollower);
-        } else if (msg.getData().containsKey(IsFollowerTask.MESSAGE_KEY)) {
-            String message = msg.getData().getString(IsFollowerTask.MESSAGE_KEY);
-            observer.displayMessageFollow("Failed to determine following relationship: " + message);
-        } else if (msg.getData().containsKey(IsFollowerTask.EXCEPTION_KEY)) {
-            Exception ex = (Exception) msg.getData().getSerializable(IsFollowerTask.EXCEPTION_KEY);
-            observer.displayMessageFollow("Failed to determine following relationship because of exception: " + ex.getMessage());
-        }
+    protected void handleSuccess(Bundle data, GetDataObserver<Boolean> observer) {
+        boolean b = observer.getData(data);
+        observer.handleSuccess(b);
     }
 }

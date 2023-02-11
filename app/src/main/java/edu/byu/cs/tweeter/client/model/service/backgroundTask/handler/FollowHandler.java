@@ -11,8 +11,6 @@ import edu.byu.cs.tweeter.client.model.service.backgroundTask.FollowTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.SimpleNotificationObserver;
 
 public class FollowHandler extends BackgroundTaskHandler<SimpleNotificationObserver> {
-    private FollowService.MainObserver observer;
-
     public FollowHandler(FollowService.FollowObserver observer) {
         super(observer);
     }

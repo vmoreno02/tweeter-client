@@ -12,6 +12,7 @@ import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.LoginHandl
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.LogoutHandler;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.RegisterHandler;
 import edu.byu.cs.tweeter.client.cache.Cache;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.SimpleNotificationObserver;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class UserService {
@@ -23,11 +24,10 @@ public class UserService {
         void startActivity(User user);
     }
 
-    public interface MainObserver {
-        void displayMessageUser(String s);
+    public interface LogoutObserver extends SimpleNotificationObserver {
 
-        void logOutToastAndUser();
     }
+
     public void getUserTask(String userAlias, Observer observer) {
         GetUserTask getUserTask = new GetUserTask(Cache.getInstance().getCurrUserAuthToken(),
                 userAlias, new GetUserHandler(observer));
@@ -52,7 +52,7 @@ public class UserService {
         executor.execute(registerTask);
     }
 
-    public void logout(MainObserver observer) {
+    public void logout(LogoutObserver observer) {
         LogoutTask logoutTask = new LogoutTask(Cache.getInstance().getCurrUserAuthToken(), new LogoutHandler(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(logoutTask);
