@@ -3,12 +3,16 @@ package edu.byu.cs.tweeter.client.presenter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 
+import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.UserService;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.RegisterTask;
+import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class RegisterPresenter {
@@ -69,16 +73,30 @@ public class RegisterPresenter {
         return Base64.getEncoder().encodeToString(imageBytes);
     }
 
-    private class RegisterObserver implements UserService.Observer {
-
+    private class RegisterObserver implements UserService.AuthenticateObserver {
         @Override
-        public void displayMessageUser(String s) {
-            view.displayMessage(s);
+        public User getAndSetData(Bundle data) {
+            User registeredUser = (User) data.getSerializable(RegisterTask.USER_KEY);
+            AuthToken authToken = (AuthToken) data.getSerializable(RegisterTask.AUTH_TOKEN_KEY);
+
+            Cache.getInstance().setCurrUser(registeredUser);
+            Cache.getInstance().setCurrUserAuthToken(authToken);
+            return registeredUser;
         }
 
         @Override
         public void startActivity(User user) {
             view.startActivity(user);
+        }
+
+        @Override
+        public void handleFailure(String message) {
+            view.displayMessage("Failed to register: " + message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            view.displayMessage("Failed to register because of exception: " + exception.getMessage());
         }
     }
 }

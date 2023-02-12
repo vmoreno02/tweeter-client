@@ -12,6 +12,7 @@ import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.LoginHandl
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.LogoutHandler;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.RegisterHandler;
 import edu.byu.cs.tweeter.client.cache.Cache;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.AuthenticationObserver;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.SimpleNotificationObserver;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -24,9 +25,9 @@ public class UserService {
         void startActivity(User user);
     }
 
-    public interface LogoutObserver extends SimpleNotificationObserver {
+    public interface LogoutObserver extends SimpleNotificationObserver {}
 
-    }
+    public interface AuthenticateObserver extends AuthenticationObserver {}
 
     public void getUserTask(String userAlias, Observer observer) {
         GetUserTask getUserTask = new GetUserTask(Cache.getInstance().getCurrUserAuthToken(),
@@ -36,7 +37,7 @@ public class UserService {
         observer.displayMessageUser("Getting user's profile...");
     }
 
-    public void login(String alias, String password, Observer observer) {
+    public void login(String alias, String password, AuthenticateObserver observer) {
         LoginTask loginTask = new LoginTask(alias,
                 password, new LoginHandler(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -44,7 +45,7 @@ public class UserService {
     }
 
     public void register(String firstName, String lastName, String alias, String password,
-                         String imageBytesBase64, Observer observer) {
+                         String imageBytesBase64, AuthenticateObserver observer) {
         RegisterTask registerTask = new RegisterTask(firstName, lastName,
                 alias, password, imageBytesBase64, new RegisterHandler(observer));
 
