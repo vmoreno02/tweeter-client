@@ -1,9 +1,12 @@
 package edu.byu.cs.tweeter.client.presenter;
 
+import android.os.Bundle;
+
 import java.util.List;
 
 import edu.byu.cs.tweeter.client.model.service.FollowService;
 import edu.byu.cs.tweeter.client.model.service.UserService;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetUserTask;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class FollowersPresenter {
@@ -40,7 +43,7 @@ public class FollowersPresenter {
     }
 
     public void getUser(String userAlias) {
-        userService.getUserTask(userAlias, new FollowersObserver());
+        userService.getUserTask(userAlias, new GetUserObserver());
     }
 
     public void loadMoreFollows(User user) {
@@ -63,13 +66,35 @@ public class FollowersPresenter {
         this.hasMorePages = hasMorePages;
     }
 
-    private class FollowersObserver implements UserService.Observer, FollowService.Observer {
+    private class GetUserObserver implements UserService.GetUserObserver {
+        @Override
+        public User getData(Bundle data) {
+            return (User) data.getSerializable(GetUserTask.USER_KEY);
+        }
+
+        @Override
+        public void handleSuccess(User data) {
+            view.startActivity(data);
+        }
+
+        @Override
+        public void handleFailure(String message) {
+            view.displayMessage("Failed to get user's profile: " + message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            view.displayMessage("Failed to get user's profile because of exception: " + exception.getMessage());
+        }
 
         @Override
         public void displayMessageUser(String s) {
             view.displayMessage(s);
         }
+    }
 
+
+    private class FollowersObserver implements UserService.Observer, FollowService.Observer {
         @Override
         public void displayMessageFollow(String s) {
             isLoading = false;
@@ -84,11 +109,6 @@ public class FollowersPresenter {
             lastFollower = (follows.size() > 0) ? follows.get(follows.size() - 1) : null;
             setHasMorePages(hasMorePages);
             view.addItems(follows);
-        }
-
-        @Override
-        public void startActivity(User user) {
-            view.startActivity(user);
         }
     }
 }

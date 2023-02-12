@@ -1,9 +1,12 @@
 package edu.byu.cs.tweeter.client.presenter;
 
+import android.os.Bundle;
+
 import java.util.List;
 
 import edu.byu.cs.tweeter.client.model.service.StatusService;
 import edu.byu.cs.tweeter.client.model.service.UserService;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetUserTask;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -52,7 +55,7 @@ public class StoryPresenter {
     }
 
     public void getUser(String userAlias) {
-        userService.getUserTask(userAlias, new StoryObserver());
+        userService.getUserTask(userAlias, new GetUserObserver());
     }
 
     public void loadStories(User user) {
@@ -61,6 +64,33 @@ public class StoryPresenter {
             view.addLoadingFooter();
 
             statusService.loadStories(user, PAGE_SIZE, lastStatus, new StoryObserver());
+        }
+    }
+
+    private class GetUserObserver implements UserService.GetUserObserver {
+        @Override
+        public User getData(Bundle data) {
+            return (User) data.getSerializable(GetUserTask.USER_KEY);
+        }
+
+        @Override
+        public void handleSuccess(User data) {
+            view.startActivity(data);
+        }
+
+        @Override
+        public void handleFailure(String message) {
+            view.displayMessage("Failed to get user's profile: " + message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            view.displayMessage("Failed to get user's profile because of exception: " + exception.getMessage());
+        }
+
+        @Override
+        public void displayMessageUser(String s) {
+            view.displayMessage(s);
         }
     }
 
@@ -80,16 +110,6 @@ public class StoryPresenter {
             isLoading = false;
             view.removeLoadingFooter();
             view.displayMessage(s);
-        }
-
-        @Override
-        public void displayMessageUser(String s) {
-            view.displayMessage(s);
-        }
-
-        @Override
-        public void startActivity(User user) {
-            view.startActivity(user);
         }
     }
 }

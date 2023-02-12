@@ -13,23 +13,23 @@ import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.LogoutHand
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.RegisterHandler;
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.AuthenticationObserver;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.GetDataObserver;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.SimpleNotificationObserver;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class UserService {
 
-    public interface Observer {
-
-        void displayMessageUser(String s);
-
-        void startActivity(User user);
-    }
+    public interface Observer {}
 
     public interface LogoutObserver extends SimpleNotificationObserver {}
 
     public interface AuthenticateObserver extends AuthenticationObserver {}
 
-    public void getUserTask(String userAlias, Observer observer) {
+    public interface GetUserObserver extends GetDataObserver<User> {
+        void displayMessageUser(String s);
+    }
+
+    public void getUserTask(String userAlias, GetUserObserver observer) {
         GetUserTask getUserTask = new GetUserTask(Cache.getInstance().getCurrUserAuthToken(),
                 userAlias, new GetUserHandler(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();
