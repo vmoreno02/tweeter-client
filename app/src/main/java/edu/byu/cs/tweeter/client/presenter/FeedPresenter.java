@@ -6,6 +6,7 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.client.model.service.StatusService;
 import edu.byu.cs.tweeter.client.model.service.UserService;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetFeedTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetUserTask;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
@@ -62,7 +63,43 @@ public class FeedPresenter {
         if (!isLoading()) {   // This guard is important for avoiding a race condition in the scrolling code.
             isLoading = true;
             view.addLoadingFooter();
-            statusService.loadMoreStatuses(user, PAGE_SIZE, lastStatus, new FeedObserver());
+            statusService.loadMoreStatuses(user, PAGE_SIZE, lastStatus, new GetFeedObserver());
+        }
+    }
+
+    private class GetFeedObserver implements StatusService.GetStoryObserver {
+
+        @Override
+        public List<Status> getItems(Bundle data) {
+            return (List<Status>) data.getSerializable(GetFeedTask.ITEMS_KEY);
+        }
+
+        @Override
+        public boolean hasMorePages(Bundle data) {
+            return data.getBoolean(GetFeedTask.MORE_PAGES_KEY);
+        }
+
+        @Override
+        public void handleSuccess(List<Status> items, boolean hasMorePages) {
+            isLoading = false;
+            view.removeLoadingFooter();
+            lastStatus = (items.size() > 0) ? items.get(items.size() - 1) : null;
+            setHasMorePages(hasMorePages);
+            view.addStatuses(items);
+        }
+
+        @Override
+        public void handleFailure(String message) {
+            isLoading = false;
+            view.removeLoadingFooter();
+            view.displayMessage("Failed to get feed: " + message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            isLoading = false;
+            view.removeLoadingFooter();
+            view.displayMessage("Failed to get feed because of exception: " + exception.getMessage());
         }
     }
 
@@ -89,25 +126,6 @@ public class FeedPresenter {
 
         @Override
         public void displayMessageUser(String s) {
-            view.displayMessage(s);
-        }
-    }
-
-    private class FeedObserver implements UserService.Observer, StatusService.Observer {
-
-        @Override
-        public void addStatuses(List<Status> statuses, boolean hasMorePages) {
-            isLoading = false;
-            view.removeLoadingFooter();
-            lastStatus = (statuses.size() > 0) ? statuses.get(statuses.size() - 1) : null;
-            setHasMorePages(hasMorePages);
-            view.addStatuses(statuses);
-        }
-
-        @Override
-        public void displayMessage(String s) {
-            isLoading = false;
-            view.removeLoadingFooter();
             view.displayMessage(s);
         }
     }

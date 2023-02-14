@@ -15,8 +15,6 @@ import edu.byu.cs.tweeter.model.domain.User;
  * Message handler (i.e., observer) for GetUserTask.
  */
 public class GetUserHandler extends BackgroundTaskHandler<GetDataObserver<User>> {
-    private UserService.GetUserObserver observer;
-
     public GetUserHandler(UserService.GetUserObserver observer) {
         super(observer);
     }

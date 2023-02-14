@@ -6,6 +6,7 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.client.model.service.FollowService;
 import edu.byu.cs.tweeter.client.model.service.UserService;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetFollowersTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetUserTask;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -50,7 +51,7 @@ public class FollowersPresenter {
         if (!isLoading) {   // This guard is important for avoiding a race condition in the scrolling code.
             isLoading = true;
             view.addLoadingFooter();
-            followService.loadMoreFollowers(user, PAGE_SIZE, lastFollower, new FollowersObserver());
+            followService.loadMoreFollowers(user, PAGE_SIZE, lastFollower, new GetFollowersObserver());
         }
     }
 
@@ -64,6 +65,42 @@ public class FollowersPresenter {
 
     public void setHasMorePages(boolean hasMorePages) {
         this.hasMorePages = hasMorePages;
+    }
+
+    private class GetFollowersObserver implements FollowService.GetFollowersObserver {
+
+        @Override
+        public List<User> getItems(Bundle data) {
+            return (List<User>) data.getSerializable(GetFollowersTask.ITEMS_KEY);
+        }
+
+        @Override
+        public boolean hasMorePages(Bundle data) {
+            return data.getBoolean(GetFollowersTask.MORE_PAGES_KEY);
+        }
+
+        @Override
+        public void handleSuccess(List<User> items, boolean hasMorePages) {
+            isLoading = false;
+            view.removeLoadingFooter();
+            lastFollower = (items.size() > 0) ? items.get(items.size() - 1) : null;
+            setHasMorePages(hasMorePages);
+            view.addItems(items);
+        }
+
+        @Override
+        public void handleFailure(String message) {
+            isLoading = false;
+            view.removeLoadingFooter();
+            view.displayMessage("Failed to get followers: " + message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            isLoading = false;
+            view.removeLoadingFooter();
+            view.displayMessage("Failed to get followers because of exception: " + exception.getMessage());
+        }
     }
 
     private class GetUserObserver implements UserService.GetUserObserver {
@@ -90,25 +127,6 @@ public class FollowersPresenter {
         @Override
         public void displayMessageUser(String s) {
             view.displayMessage(s);
-        }
-    }
-
-
-    private class FollowersObserver implements UserService.Observer, FollowService.Observer {
-        @Override
-        public void displayMessageFollow(String s) {
-            isLoading = false;
-            view.removeLoadingFooter();
-            view.displayMessage(s);
-        }
-
-        @Override
-        public void addFollows(List<User> follows, boolean hasMorePages) {
-            isLoading = false;
-            view.removeLoadingFooter();
-            lastFollower = (follows.size() > 0) ? follows.get(follows.size() - 1) : null;
-            setHasMorePages(hasMorePages);
-            view.addItems(follows);
         }
     }
 }

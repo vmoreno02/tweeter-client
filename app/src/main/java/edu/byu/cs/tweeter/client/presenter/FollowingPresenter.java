@@ -6,6 +6,7 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.client.model.service.FollowService;
 import edu.byu.cs.tweeter.client.model.service.UserService;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetFollowingTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetUserTask;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -62,7 +63,43 @@ public class FollowingPresenter {
             isLoading = true;
             view.addLoadingFooter();
 
-            followService.loadMoreFollowees(user, PAGE_SIZE, lastFollowee, new FollowingObserver());
+            followService.loadMoreFollowees(user, PAGE_SIZE, lastFollowee, new GetFollowingObserver());
+        }
+    }
+
+    private class GetFollowingObserver implements FollowService.GetFollowingObserver {
+
+        @Override
+        public List<User> getItems(Bundle data) {
+            return (List<User>) data.getSerializable(GetFollowingTask.ITEMS_KEY);
+        }
+
+        @Override
+        public boolean hasMorePages(Bundle data) {
+            return data.getBoolean(GetFollowingTask.MORE_PAGES_KEY);
+        }
+
+        @Override
+        public void handleSuccess(List<User> items, boolean hasMorePages) {
+            isLoading = false;
+            view.removeLoadingFooter();
+            lastFollowee = (items.size() > 0) ? items.get(items.size() - 1) : null;
+            setHasMorePages(hasMorePages);
+            view.addItems(items);
+        }
+
+        @Override
+        public void handleFailure(String message) {
+            isLoading = false;
+            view.removeLoadingFooter();
+            view.displayMessage("Failed to get following: " + message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            isLoading = false;
+            view.removeLoadingFooter();
+            view.displayMessage("Failed to get following because of exception: " + exception.getMessage());
         }
     }
 
@@ -90,26 +127,6 @@ public class FollowingPresenter {
         @Override
         public void displayMessageUser(String s) {
             view.displayMessage(s);
-        }
-    }
-
-
-    private class FollowingObserver implements UserService.Observer, FollowService.Observer {
-
-        @Override
-        public void displayMessageFollow(String s) {
-            isLoading = false;
-            view.removeLoadingFooter();
-            view.displayMessage(s);
-        }
-
-        @Override
-        public void addFollows(List<User> follows, boolean hasMorePages) {
-            isLoading = false;
-            view.removeLoadingFooter();
-            lastFollowee = (follows.size() > 0) ? follows.get(follows.size() - 1) : null;
-            setHasMorePages(hasMorePages);
-            view.addItems(follows);
         }
     }
 }
