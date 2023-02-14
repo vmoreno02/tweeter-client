@@ -10,25 +10,18 @@ import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetFollowingCountT
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetFollowingTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.IsFollowerTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.UnfollowTask;
-import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.GetFollowersCountHandler;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.GetDataHandler;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.GetFollowersHandler;
-import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.GetFollowingCountHandler;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.GetFollowingHandler;
-import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.IsFollowerHandler;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.SimpleNotificationHandler;
 import edu.byu.cs.tweeter.client.cache.Cache;
-import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.GetDataObserver;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.PagedObserver;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class FollowService {
     public interface SimpleNotificationObserver extends edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.SimpleNotificationObserver {}
 
-    public interface IsFollowerObserver extends GetDataObserver<Boolean> {}
-
-    public interface GetFollowersCountObserver extends GetDataObserver<Integer> {}
-
-    public interface GetFollowingCountObserver extends GetDataObserver<Integer> {}
+    public interface GetDataObserver<T> extends edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.GetDataObserver<T> {}
 
     public interface GetFollowersObserver extends PagedObserver<User> {}
 
@@ -48,9 +41,9 @@ public class FollowService {
         executor.execute(getFollowersTask);
     }
 
-    public void isFollower(User selectedUser, IsFollowerObserver observer) {
+    public void isFollower(User selectedUser, GetDataObserver<Boolean> observer) {
         IsFollowerTask isFollowerTask = new IsFollowerTask(Cache.getInstance().getCurrUserAuthToken(),
-                Cache.getInstance().getCurrUser(), selectedUser, new IsFollowerHandler(observer));
+                Cache.getInstance().getCurrUser(), selectedUser, new GetDataHandler<>(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(isFollowerTask);
     }
@@ -69,15 +62,15 @@ public class FollowService {
         executor.execute(followTask);
     }
 
-    public void getFollowersCount(User selectedUser, ExecutorService executor, FollowService.GetFollowersCountObserver observer) {
+    public void getFollowersCount(User selectedUser, ExecutorService executor, GetDataObserver<Integer> observer) {
         GetFollowersCountTask followersCountTask = new GetFollowersCountTask(Cache.getInstance().getCurrUserAuthToken(),
-                selectedUser, new GetFollowersCountHandler(observer));
+                selectedUser, new GetDataHandler<>(observer));
         executor.execute(followersCountTask);
     }
 
-    public void getFollowingCount(User selectedUser, ExecutorService executor, GetFollowingCountObserver observer) {
+    public void getFollowingCount(User selectedUser, ExecutorService executor, GetDataObserver<Integer> observer) {
         GetFollowingCountTask followingCountTask = new GetFollowingCountTask(Cache.getInstance().getCurrUserAuthToken(),
-                selectedUser, new GetFollowingCountHandler(observer));
+                selectedUser, new GetDataHandler<>(observer));
         executor.execute(followingCountTask);
     }
 }

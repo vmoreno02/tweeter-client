@@ -12,7 +12,6 @@ import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.GetStoryHa
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.SimpleNotificationHandler;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.PagedObserver;
-import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.SimpleNotificationObserver;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -24,7 +23,7 @@ public class StatusService {
         void displayMessage(String s);
     }
 
-    public interface PostStatusObserver extends SimpleNotificationObserver {}
+    public interface SimpleNotificationObserver extends edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.SimpleNotificationObserver {}
 
     public interface GetStoryObserver extends PagedObserver<Status> {}
 
@@ -42,7 +41,7 @@ public class StatusService {
         executor.execute(getStoryTask);
     }
 
-    public void postStatus(Status newStatus, PostStatusObserver observer) {
+    public void postStatus(Status newStatus, SimpleNotificationObserver observer) {
         PostStatusTask statusTask = new PostStatusTask(Cache.getInstance().getCurrUserAuthToken(),
                 newStatus, new SimpleNotificationHandler(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();

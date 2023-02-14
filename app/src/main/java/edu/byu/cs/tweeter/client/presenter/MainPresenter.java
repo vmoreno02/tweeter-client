@@ -145,7 +145,7 @@ public class MainPresenter {
         return containedMentions;
     }
 
-    private class GetFollowingCountObserver implements FollowService.GetFollowingCountObserver {
+    private class GetFollowingCountObserver implements FollowService.GetDataObserver<Integer> {
 
         @Override
         public Integer getData(Bundle data) {
@@ -168,7 +168,7 @@ public class MainPresenter {
         }
     }
 
-    private class GetFollowersCountObserver implements FollowService.GetFollowersCountObserver {
+    private class GetFollowersCountObserver implements FollowService.GetDataObserver<Integer> {
 
         @Override
         public Integer getData(Bundle data) {
@@ -191,7 +191,7 @@ public class MainPresenter {
         }
     }
 
-    private class PostStatusObserver implements StatusService.PostStatusObserver {
+    private class PostStatusObserver implements StatusService.SimpleNotificationObserver {
 
         @Override
         public void handleFailure(String message) {
@@ -210,7 +210,7 @@ public class MainPresenter {
         }
     }
 
-    private class IsFollowerObserver implements FollowService.IsFollowerObserver {
+    private class IsFollowerObserver implements FollowService.GetDataObserver<Boolean> {
 
         @Override
         public Boolean getData(Bundle data) {

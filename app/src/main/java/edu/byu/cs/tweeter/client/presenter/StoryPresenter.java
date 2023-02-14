@@ -104,9 +104,10 @@ public class StoryPresenter {
         }
     }
 
-    private class GetUserObserver implements UserService.GetUserObserver {
+    private class GetUserObserver implements UserService.GetDataObserver {
         @Override
         public User getData(Bundle data) {
+            view.displayMessage("Getting user's profile...");
             return (User) data.getSerializable(GetUserTask.USER_KEY);
         }
 
@@ -123,11 +124,6 @@ public class StoryPresenter {
         @Override
         public void handleException(Exception exception) {
             view.displayMessage("Failed to get user's profile because of exception: " + exception.getMessage());
-        }
-
-        @Override
-        public void displayMessageUser(String s) {
-            view.displayMessage(s);
         }
     }
 }
