@@ -16,7 +16,6 @@ import edu.byu.cs.tweeter.client.model.service.UserService;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetFollowersCountTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetFollowingCountTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.IsFollowerTask;
-import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.PostStatusHandler;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -234,7 +233,7 @@ public class MainPresenter {
         }
     }
 
-    private class LogOutObserver implements UserService.LogoutObserver {
+    private class LogOutObserver implements UserService.SimpleNotificationObserver {
 
         @Override
         public void handleFailure(String message) {
@@ -252,7 +251,7 @@ public class MainPresenter {
         }
     }
 
-    private class UnfollowObserver implements FollowService.UnfollowObserver {
+    private class UnfollowObserver implements FollowService.SimpleNotificationObserver {
 
         @Override
         public void handleSuccess() {
@@ -273,7 +272,7 @@ public class MainPresenter {
             view.enableFollowButton(true);
         }
     }
-    private class FollowObserver implements FollowService.FollowObserver {
+    private class FollowObserver implements FollowService.SimpleNotificationObserver {
 
         @Override
         public void handleSuccess() {
