@@ -16,6 +16,8 @@ import edu.byu.cs.tweeter.client.model.service.UserService;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetFollowersCountTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetFollowingCountTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.IsFollowerTask;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.GetDataObserver;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.SimpleNotificationObserver;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -145,7 +147,7 @@ public class MainPresenter {
         return containedMentions;
     }
 
-    private class GetFollowingCountObserver implements FollowService.GetDataObserver<Integer> {
+    private class GetFollowingCountObserver implements GetDataObserver<Integer> {
 
         @Override
         public Integer getData(Bundle data) {
@@ -168,7 +170,7 @@ public class MainPresenter {
         }
     }
 
-    private class GetFollowersCountObserver implements FollowService.GetDataObserver<Integer> {
+    private class GetFollowersCountObserver implements GetDataObserver<Integer> {
 
         @Override
         public Integer getData(Bundle data) {
@@ -191,7 +193,7 @@ public class MainPresenter {
         }
     }
 
-    private class PostStatusObserver implements StatusService.SimpleNotificationObserver {
+    private class PostStatusObserver implements SimpleNotificationObserver {
 
         @Override
         public void handleFailure(String message) {
@@ -210,7 +212,7 @@ public class MainPresenter {
         }
     }
 
-    private class IsFollowerObserver implements FollowService.GetDataObserver<Boolean> {
+    private class IsFollowerObserver implements GetDataObserver<Boolean> {
 
         @Override
         public Boolean getData(Bundle data) {
@@ -233,7 +235,7 @@ public class MainPresenter {
         }
     }
 
-    private class LogOutObserver implements UserService.SimpleNotificationObserver {
+    private class LogOutObserver implements SimpleNotificationObserver {
 
         @Override
         public void handleFailure(String message) {
@@ -251,7 +253,7 @@ public class MainPresenter {
         }
     }
 
-    private class UnfollowObserver implements FollowService.SimpleNotificationObserver {
+    private class UnfollowObserver implements SimpleNotificationObserver {
 
         @Override
         public void handleSuccess() {
@@ -272,7 +274,7 @@ public class MainPresenter {
             view.enableFollowButton(true);
         }
     }
-    private class FollowObserver implements FollowService.SimpleNotificationObserver {
+    private class FollowObserver implements SimpleNotificationObserver {
 
         @Override
         public void handleSuccess() {

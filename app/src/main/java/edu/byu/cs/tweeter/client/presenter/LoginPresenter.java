@@ -5,6 +5,7 @@ import android.os.Bundle;
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.UserService;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.LoginTask;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.AuthenticationObserver;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -40,7 +41,7 @@ public class LoginPresenter {
         userService.login(alias, password, new LoginObserver());
     }
 
-    private class LoginObserver implements UserService.AuthenticateObserver {
+    private class LoginObserver implements AuthenticationObserver {
         @Override
         public User getAndSetData(Bundle data) {
             User loggedInUser = (User) data.getSerializable(LoginTask.USER_KEY);

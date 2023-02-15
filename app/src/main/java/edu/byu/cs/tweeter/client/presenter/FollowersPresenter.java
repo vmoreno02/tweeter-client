@@ -8,6 +8,7 @@ import edu.byu.cs.tweeter.client.model.service.FollowService;
 import edu.byu.cs.tweeter.client.model.service.UserService;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetFollowersTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetUserTask;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.GetDataObserver;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.PagedObserver;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -104,7 +105,7 @@ public class FollowersPresenter {
         }
     }
 
-    private class GetUserObserver implements UserService.GetDataObserver {
+    private class GetUserObserver implements GetDataObserver<User> {
         @Override
         public User getData(Bundle data) {
             view.displayMessage("Getting user's profile...");

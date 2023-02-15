@@ -14,14 +14,12 @@ import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.GetDataHan
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.PagedHandler;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.SimpleNotificationHandler;
 import edu.byu.cs.tweeter.client.cache.Cache;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.GetDataObserver;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.PagedObserver;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.SimpleNotificationObserver;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class FollowService {
-    public interface SimpleNotificationObserver extends edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.SimpleNotificationObserver {}
-
-    public interface GetDataObserver<T> extends edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.GetDataObserver<T> {}
-
     public void loadMoreFollowees(User user, int pageSize, User lastFollowee, PagedObserver<User> observer) {
         GetFollowingTask getFollowingTask = new GetFollowingTask(Cache.getInstance().getCurrUserAuthToken(),
                 user, pageSize, lastFollowee, new PagedHandler<>(observer));

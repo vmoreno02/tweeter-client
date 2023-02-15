@@ -12,23 +12,19 @@ import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.GetDataHan
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.SimpleNotificationHandler;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.AuthenticationObserver;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.GetDataObserver;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.SimpleNotificationObserver;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class UserService {
-    public interface SimpleNotificationObserver extends edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.SimpleNotificationObserver {}
-
-    public interface AuthenticateObserver extends AuthenticationObserver {}
-
-    public interface GetDataObserver extends edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.GetDataObserver<User> {}
-
-    public void getUserTask(String userAlias, GetDataObserver observer) {
+    public void getUserTask(String userAlias, GetDataObserver<User> observer) {
         GetUserTask getUserTask = new GetUserTask(Cache.getInstance().getCurrUserAuthToken(),
                 userAlias, new GetDataHandler<>(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(getUserTask);
     }
 
-    public void login(String alias, String password, AuthenticateObserver observer) {
+    public void login(String alias, String password, AuthenticationObserver observer) {
         LoginTask loginTask = new LoginTask(alias,
                 password, new AuthenticationHandler(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -36,7 +32,7 @@ public class UserService {
     }
 
     public void register(String firstName, String lastName, String alias, String password,
-                         String imageBytesBase64, AuthenticateObserver observer) {
+                         String imageBytesBase64, AuthenticationObserver observer) {
         RegisterTask registerTask = new RegisterTask(firstName, lastName,
                 alias, password, imageBytesBase64, new AuthenticationHandler(observer));
 
