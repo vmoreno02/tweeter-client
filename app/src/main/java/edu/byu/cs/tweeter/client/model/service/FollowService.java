@@ -11,8 +11,7 @@ import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetFollowingTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.IsFollowerTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.UnfollowTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.GetDataHandler;
-import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.GetFollowersHandler;
-import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.GetFollowingHandler;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.PagedHandler;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.SimpleNotificationHandler;
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.PagedObserver;
@@ -23,20 +22,16 @@ public class FollowService {
 
     public interface GetDataObserver<T> extends edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.GetDataObserver<T> {}
 
-    public interface GetFollowersObserver extends PagedObserver<User> {}
-
-    public interface GetFollowingObserver extends PagedObserver<User> {}
-
-    public void loadMoreFollowees(User user, int pageSize, User lastFollowee, GetFollowingObserver observer) {
+    public void loadMoreFollowees(User user, int pageSize, User lastFollowee, PagedObserver<User> observer) {
         GetFollowingTask getFollowingTask = new GetFollowingTask(Cache.getInstance().getCurrUserAuthToken(),
-                user, pageSize, lastFollowee, new GetFollowingHandler(observer));
+                user, pageSize, lastFollowee, new PagedHandler<>(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(getFollowingTask);
     }
 
-    public void loadMoreFollowers(User user, int pageSize, User lastFollower, GetFollowersObserver observer) {
+    public void loadMoreFollowers(User user, int pageSize, User lastFollower, PagedObserver<User> observer) {
         GetFollowersTask getFollowersTask = new GetFollowersTask(Cache.getInstance().getCurrUserAuthToken(),
-                user, pageSize, lastFollower, new GetFollowersHandler(observer));
+                user, pageSize, lastFollower, new PagedHandler<>(observer));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(getFollowersTask);
     }

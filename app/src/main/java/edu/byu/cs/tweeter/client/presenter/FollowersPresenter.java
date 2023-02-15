@@ -8,6 +8,7 @@ import edu.byu.cs.tweeter.client.model.service.FollowService;
 import edu.byu.cs.tweeter.client.model.service.UserService;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetFollowersTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetUserTask;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.PagedObserver;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class FollowersPresenter {
@@ -67,7 +68,7 @@ public class FollowersPresenter {
         this.hasMorePages = hasMorePages;
     }
 
-    private class GetFollowersObserver implements FollowService.GetFollowersObserver {
+    private class GetFollowersObserver implements PagedObserver<User> {
 
         @Override
         public List<User> getItems(Bundle data) {

@@ -8,6 +8,7 @@ import edu.byu.cs.tweeter.client.model.service.StatusService;
 import edu.byu.cs.tweeter.client.model.service.UserService;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetStoryTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetUserTask;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.PagedObserver;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -68,7 +69,7 @@ public class StoryPresenter {
         }
     }
 
-    private class GetStoryObserver implements StatusService.GetStoryObserver {
+    private class GetStoryObserver implements PagedObserver<Status> {
 
         @Override
         public List<Status> getItems(Bundle data) {
