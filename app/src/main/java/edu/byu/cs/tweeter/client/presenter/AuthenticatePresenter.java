@@ -6,16 +6,13 @@ import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.UserService;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.AuthenticateTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.AuthenticationObserver;
-import edu.byu.cs.tweeter.client.presenter.view.AuthenticateView;
+import edu.byu.cs.tweeter.client.presenter.view.StartActivityView;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class AuthenticatePresenter extends Presenter<AuthenticateView> {
-    protected UserService userService;
-
-    public AuthenticatePresenter(AuthenticateView view) {
+public class AuthenticatePresenter extends Presenter<StartActivityView> {
+    public AuthenticatePresenter(StartActivityView view) {
         super(view);
-        userService = new UserService();
     }
 
     @Override

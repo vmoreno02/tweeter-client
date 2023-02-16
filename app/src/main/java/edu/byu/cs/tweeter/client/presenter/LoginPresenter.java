@@ -1,7 +1,6 @@
 package edu.byu.cs.tweeter.client.presenter;
 
-import edu.byu.cs.tweeter.client.model.service.UserService;
-import edu.byu.cs.tweeter.client.presenter.view.AuthenticateView;
+import edu.byu.cs.tweeter.client.presenter.view.StartActivityView;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class LoginPresenter extends AuthenticatePresenter {
@@ -11,7 +10,7 @@ public class LoginPresenter extends AuthenticatePresenter {
         void displayMessage(String s);
     }
 
-    public LoginPresenter(AuthenticateView view) {
+    public LoginPresenter(StartActivityView view) {
         super(view);
     }
 

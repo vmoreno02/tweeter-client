@@ -8,11 +8,10 @@ import android.widget.ImageView;
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 
-import edu.byu.cs.tweeter.client.model.service.UserService;
-import edu.byu.cs.tweeter.client.presenter.view.AuthenticateView;
+import edu.byu.cs.tweeter.client.presenter.view.StartActivityView;
 
 public class RegisterPresenter extends AuthenticatePresenter {
-    public RegisterPresenter(AuthenticateView view) {
+    public RegisterPresenter(StartActivityView view) {
         super(view);
     }
 
