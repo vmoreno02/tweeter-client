@@ -12,11 +12,8 @@ import edu.byu.cs.tweeter.client.model.service.UserService;
 import edu.byu.cs.tweeter.client.presenter.view.AuthenticateView;
 
 public class RegisterPresenter extends AuthenticatePresenter {
-    private final UserService userService;
-
     public RegisterPresenter(AuthenticateView view) {
         super(view);
-        userService = new UserService();
     }
 
     @Override

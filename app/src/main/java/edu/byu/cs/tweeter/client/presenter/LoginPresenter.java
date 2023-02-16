@@ -13,7 +13,6 @@ public class LoginPresenter extends AuthenticatePresenter {
 
     public LoginPresenter(AuthenticateView view) {
         super(view);
-        userService = new UserService();
     }
 
     public void validateLogin(String alias, String password) {
