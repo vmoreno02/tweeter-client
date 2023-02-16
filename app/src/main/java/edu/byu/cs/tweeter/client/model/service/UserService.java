@@ -16,19 +16,16 @@ import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.GetDataOb
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.SimpleNotificationObserver;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class UserService {
+public class UserService extends Service {
     public void getUserTask(String userAlias, GetDataObserver<User> observer) {
         GetUserTask getUserTask = new GetUserTask(Cache.getInstance().getCurrUserAuthToken(),
                 userAlias, new GetDataHandler<>(observer));
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(getUserTask);
+        execute(getUserTask);
     }
 
     public void login(String alias, String password, AuthenticationObserver observer) {
-        LoginTask loginTask = new LoginTask(alias,
-                password, new AuthenticationHandler(observer));
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(loginTask);
+        LoginTask loginTask = new LoginTask(alias, password, new AuthenticationHandler(observer));
+        execute(loginTask);
     }
 
     public void register(String firstName, String lastName, String alias, String password,
@@ -36,13 +33,11 @@ public class UserService {
         RegisterTask registerTask = new RegisterTask(firstName, lastName,
                 alias, password, imageBytesBase64, new AuthenticationHandler(observer));
 
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(registerTask);
+        execute(registerTask);
     }
 
     public void logout(SimpleNotificationObserver observer) {
         LogoutTask logoutTask = new LogoutTask(Cache.getInstance().getCurrUserAuthToken(), new SimpleNotificationHandler(observer));
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(logoutTask);
+        execute(logoutTask);
     }
 }
