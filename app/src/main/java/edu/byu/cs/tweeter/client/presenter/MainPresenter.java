@@ -75,12 +75,12 @@ public class MainPresenter {
         statusService.postStatus(newStatus, new PostStatusObserver());
     }
 
-    public void getFollowersCount(User selectedUser, ExecutorService executor) {
-        followService.getFollowersCount(selectedUser, executor, new GetFollowersCountObserver());
+    public void getFollowersCount(User selectedUser) {
+        followService.getFollowersCount(selectedUser, new GetFollowersCountObserver());
     }
 
-    public void getFollowingCount(User selectedUser, ExecutorService executor) {
-        followService.getFollowingCount(selectedUser, executor, new GetFollowingCountObserver());
+    public void getFollowingCount(User selectedUser) {
+        followService.getFollowingCount(selectedUser, new GetFollowingCountObserver());
     }
 
     public String getFormattedDateTime() throws ParseException {

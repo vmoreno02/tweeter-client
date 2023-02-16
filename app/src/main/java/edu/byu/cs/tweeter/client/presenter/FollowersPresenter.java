@@ -15,6 +15,6 @@ public class FollowersPresenter extends PagedUserPresenter {
 
     @Override
     void loadItems(User user, PagedPresenter<User>.GetPagedItemsObserver getPagedItemsObserver) {
-        followService.loadMoreFollowees(user, PAGE_SIZE, lastItem, getPagedItemsObserver);
+        followService.loadMoreFollowers(user, PAGE_SIZE, lastItem, getPagedItemsObserver);
     }
 }

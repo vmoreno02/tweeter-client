@@ -1,8 +1,5 @@
 package edu.byu.cs.tweeter.client.model.service;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.FollowTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetFollowersCountTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetFollowersTask;
@@ -50,15 +47,15 @@ public class FollowService extends Service {
         execute(followTask);
     }
 
-    public void getFollowersCount(User selectedUser, ExecutorService executor, GetDataObserver<Integer> observer) {
+    public void getFollowersCount(User selectedUser, GetDataObserver<Integer> observer) {
         GetFollowersCountTask followersCountTask = new GetFollowersCountTask(Cache.getInstance().getCurrUserAuthToken(),
                 selectedUser, new GetDataHandler<>(observer));
-        executeWithProvided(executor, followersCountTask);
+        execute(followersCountTask);
     }
 
-    public void getFollowingCount(User selectedUser, ExecutorService executor, GetDataObserver<Integer> observer) {
+    public void getFollowingCount(User selectedUser, GetDataObserver<Integer> observer) {
         GetFollowingCountTask followingCountTask = new GetFollowingCountTask(Cache.getInstance().getCurrUserAuthToken(),
                 selectedUser, new GetDataHandler<>(observer));
-        executeWithProvided(executor, followingCountTask);
+        execute(followingCountTask);
     }
 }

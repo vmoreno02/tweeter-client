@@ -172,13 +172,11 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
     }
 
     public void updateSelectedUserFollowingAndFollowers() {
-        ExecutorService executor = Executors.newFixedThreadPool(2);
-
         // Get count of most recently selected user's followers.
-        presenter.getFollowersCount(selectedUser, executor);
+        presenter.getFollowersCount(selectedUser);
 
         // Get count of most recently selected user's followees (who they are following)
-        presenter.getFollowingCount(selectedUser, executor);
+        presenter.getFollowingCount(selectedUser);
     }
 
     public void updateFollowButton(boolean removed) {
