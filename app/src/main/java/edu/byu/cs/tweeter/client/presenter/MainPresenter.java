@@ -22,7 +22,7 @@ import edu.byu.cs.tweeter.client.presenter.view.MainView;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class MainPresenter extends Presenter<MainView> {
+public class MainPresenter extends AbstractMainPresenter {
     private final StatusService statusService;
     private final FollowService followService;
 
@@ -125,12 +125,7 @@ public class MainPresenter extends Presenter<MainView> {
         return containedMentions;
     }
 
-    private class GetFollowingCountObserver implements GetDataObserver<Integer> {
-
-        @Override
-        public Integer getData(Bundle data) {
-            return data.getInt(GetFollowingCountTask.COUNT_KEY);
-        }
+    private class GetFollowingCountObserver extends GetCountObserver {
 
         @Override
         public void handleSuccess(Integer data) {
@@ -138,22 +133,12 @@ public class MainPresenter extends Presenter<MainView> {
         }
 
         @Override
-        public void handleFailure(String message) {
-            view.displayMessage("Failed to get following count: " + message);
-        }
-
-        @Override
-        public void handleException(Exception exception) {
-            view.displayMessage("Failed to get following count because of exception: " + exception.getMessage());
+        String createMessage() {
+            return "get following count";
         }
     }
 
-    private class GetFollowersCountObserver implements GetDataObserver<Integer> {
-
-        @Override
-        public Integer getData(Bundle data) {
-            return data.getInt(GetFollowersCountTask.COUNT_KEY);
-        }
+    private class GetFollowersCountObserver extends GetCountObserver {
 
         @Override
         public void handleSuccess(Integer data) {
@@ -161,36 +146,31 @@ public class MainPresenter extends Presenter<MainView> {
         }
 
         @Override
-        public void handleFailure(String message) {
-            view.displayMessage("Failed to get followers count: " + message);
-        }
-
-        @Override
-        public void handleException(Exception exception) {
-            view.displayMessage("Failed to get followers count because of exception: " + exception.getMessage());
+        String createMessage() {
+            return "get followers count";
         }
     }
 
-    private class PostStatusObserver implements SimpleNotificationObserver {
-
-        @Override
-        public void handleFailure(String message) {
-            view.displayMessage("Failed to post status: " + message);
-        }
-
-        @Override
-        public void handleException(Exception exception) {
-            view.displayMessage("Failed to post status because of exception: " + exception.getMessage());
-        }
+    private class PostStatusObserver extends PresenterObserver implements SimpleNotificationObserver {
 
         @Override
         public void handleSuccess() {
             view.cancelPostingToast();
             view.displayMessage("Successfully Posted!");
         }
+
+        @Override
+        String createMessage() {
+            return "post status";
+        }
+
+        @Override
+        void handleError() {
+
+        }
     }
 
-    private class IsFollowerObserver implements GetDataObserver<Boolean> {
+    private class IsFollowerObserver extends PresenterObserver implements GetDataObserver<Boolean> {
 
         @Override
         public Boolean getData(Bundle data) {
@@ -203,26 +183,26 @@ public class MainPresenter extends Presenter<MainView> {
         }
 
         @Override
-        public void handleFailure(String message) {
-            view.displayMessage("Failed to determine following relationship: " + message);
+        String createMessage() {
+            return "determine following relationship";
         }
 
         @Override
-        public void handleException(Exception exception) {
-            view.displayMessage("Failed to determine following relationship because of exception: " + exception.getMessage());
+        void handleError() {
+
         }
     }
 
-    private class LogOutObserver implements SimpleNotificationObserver {
+    private class LogOutObserver extends PresenterObserver implements SimpleNotificationObserver {
 
         @Override
-        public void handleFailure(String message) {
-            view.displayMessage("Failed to logout: " + message);
+        String createMessage() {
+            return "log out";
         }
 
         @Override
-        public void handleException(Exception exception) {
-            view.displayMessage("Failed to logout because of exception: " + exception.getMessage());
+        void handleError() {
+
         }
 
         @Override
@@ -231,46 +211,28 @@ public class MainPresenter extends Presenter<MainView> {
         }
     }
 
-    private class UnfollowObserver implements SimpleNotificationObserver {
+    private class UnfollowObserver extends FollowButtonObserver {
 
         @Override
-        public void handleSuccess() {
-            view.updateSUFAF();
+        String createMessage() {
+            return "unfollow";
+        }
+
+        @Override
+        void updateFollowButton() {
             view.followButtonUpdate(true);
-            view.enableFollowButton(true);
-        }
-
-        @Override
-        public void handleFailure(String message) {
-            view.displayMessage("Failed to unfollow: " + message);
-            view.enableFollowButton(true);
-        }
-
-        @Override
-        public void handleException(Exception exception) {
-            view.displayMessage("Failed to unfollow because of exception: " + exception.getMessage());
-            view.enableFollowButton(true);
         }
     }
-    private class FollowObserver implements SimpleNotificationObserver {
+    private class FollowObserver extends FollowButtonObserver {
 
         @Override
-        public void handleSuccess() {
-            view.updateSUFAF();
+        String createMessage() {
+            return "follow";
+        }
+
+        @Override
+        void updateFollowButton() {
             view.followButtonUpdate(false);
-            view.enableFollowButton(true);
-        }
-
-        @Override
-        public void handleFailure(String message) {
-            view.displayMessage("Failed to follow: " + message);
-            view.enableFollowButton(true);
-        }
-
-        @Override
-        public void handleException(Exception exception) {
-            view.displayMessage(exception.getMessage());
-            view.enableFollowButton(true);
         }
     }
 }
