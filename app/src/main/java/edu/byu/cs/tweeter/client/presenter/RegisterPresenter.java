@@ -15,14 +15,9 @@ public class RegisterPresenter extends AuthenticatePresenter {
         super(view);
     }
 
-    @Override
-    String createMessage() {
-        return "register";
-    }
-
     public void register(String firstName, String lastName, String alias, String password,
                          ImageView imageToUpload) {
-        userService.register(firstName, lastName, alias, password, imageToBytes(imageToUpload), new AuthenticateObserver());
+        userService.register(firstName, lastName, alias, password, imageToBytes(imageToUpload), new RegisterObserver());
     }
 
     public void validateRegistration(String firstName, String lastName, String alias, 
@@ -62,20 +57,10 @@ public class RegisterPresenter extends AuthenticatePresenter {
         return Base64.getEncoder().encodeToString(imageBytes);
     }
 
-    /*private class RegisterObserver extends PresenterObserver implements AuthenticationObserver {
+    public class RegisterObserver extends AuthenticateObserver {
         @Override
-        public User getAndSetData(Bundle data) {
-            User registeredUser = (User) data.getSerializable(RegisterTask.USER_KEY);
-            AuthToken authToken = (AuthToken) data.getSerializable(RegisterTask.AUTH_TOKEN_KEY);
-
-            Cache.getInstance().setCurrUser(registeredUser);
-            Cache.getInstance().setCurrUserAuthToken(authToken);
-            return registeredUser;
+        String createMessage() {
+            return "register";
         }
-
-        @Override
-        public void startActivity(User user) {
-            view.startActivity(user);
-        }
-    }*/
+    }
 }

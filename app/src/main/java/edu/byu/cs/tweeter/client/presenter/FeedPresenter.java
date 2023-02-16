@@ -11,12 +11,14 @@ public class FeedPresenter extends PagedStatusPresenter {
     }
 
     @Override
-    String createMessage() {
-        return "get feed";
+    void loadItems(User user) {
+        statusService.loadMoreStatuses(user, PAGE_SIZE, lastItem, new FeedObserver());
     }
 
-    @Override
-    void loadItems(User user, PagedPresenter<Status>.GetPagedItemsObserver getPagedItemsObserver) {
-        statusService.loadMoreStatuses(user, PAGE_SIZE, lastItem,getPagedItemsObserver);
+    public class FeedObserver extends GetPagedItemsObserver {
+        @Override
+        String createMessage() {
+            return "get feed";
+        }
     }
 }

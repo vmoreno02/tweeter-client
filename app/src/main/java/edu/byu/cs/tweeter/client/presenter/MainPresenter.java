@@ -18,39 +18,17 @@ import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetFollowingCountT
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.IsFollowerTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.GetDataObserver;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.SimpleNotificationObserver;
+import edu.byu.cs.tweeter.client.presenter.view.MainView;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class MainPresenter {
-    private final View view;
-    
-    private final UserService userService;
+public class MainPresenter extends Presenter<MainView> {
     private final StatusService statusService;
     private final FollowService followService;
 
-    public interface View {
-        void setFollow(boolean isFollower);
-
-        void displayMessage(String s);
-
-        void updateSUFAF();
-
-        void followButtonUpdate(boolean b);
-
-        void enableFollowButton(boolean b);
-
-        void logOutToastAndUser();
-
-        void cancelPostingToast();
-
-        void setFollowerCount(int count);
-
-        void setFolloweeCount(int count);
-    }
     
-    public MainPresenter(View view) {
-        this.view = view;
-        userService = new UserService();
+    public MainPresenter(MainView view) {
+        super(view);
         statusService = new StatusService();
         followService = new FollowService();
     }

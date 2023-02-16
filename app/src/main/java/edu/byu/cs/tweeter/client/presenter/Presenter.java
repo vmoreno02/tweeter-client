@@ -13,7 +13,7 @@ public abstract class Presenter<T extends PresenterView> {
         this.userService = new UserService();
     }
 
-    public class PresenterObserver implements ServiceObserver {
+    public abstract class PresenterObserver implements ServiceObserver {
 
         @Override
         public void handleFailure(String message) {
@@ -26,9 +26,10 @@ public abstract class Presenter<T extends PresenterView> {
             view.displayMessage("Failed to " + createMessage() + "because of exception: " + exception.getMessage());
             handleError();
         }
+        abstract String createMessage();
+
+        abstract void handleError();
     }
 
-    abstract String createMessage();
 
-    abstract void handleError();
 }

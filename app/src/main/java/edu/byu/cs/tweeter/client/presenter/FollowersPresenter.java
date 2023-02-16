@@ -9,12 +9,14 @@ public class FollowersPresenter extends PagedUserPresenter {
     }
 
     @Override
-    String createMessage() {
-        return "get followers";
+    void loadItems(User user) {
+        followService.loadMoreFollowers(user, PAGE_SIZE, lastItem, new FollowersObserver());
     }
 
-    @Override
-    void loadItems(User user, PagedPresenter<User>.GetPagedItemsObserver getPagedItemsObserver) {
-        followService.loadMoreFollowers(user, PAGE_SIZE, lastItem, getPagedItemsObserver);
+    public class FollowersObserver extends GetPagedItemsObserver {
+        @Override
+        String createMessage() {
+            return "get followers";
+        }
     }
 }

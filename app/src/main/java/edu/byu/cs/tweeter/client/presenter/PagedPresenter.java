@@ -21,17 +21,6 @@ public abstract class PagedPresenter<T> extends Presenter<PagedView<T>> {
         super(view);
     }
 
-    @Override
-    String createMessage() {
-        return "get user's profile";
-    }
-
-    @Override
-    void handleError() {
-        isLoading = false;
-        view.removeLoadingFooter();
-    }
-
     public void getUser(String userAlias) {
         userService.getUserTask(userAlias, new GetUserObserver());
     }
@@ -40,11 +29,11 @@ public abstract class PagedPresenter<T> extends Presenter<PagedView<T>> {
         if (!isLoading) {   // This guard is important for avoiding a race condition in the scrolling code.
             isLoading = true;
             view.addLoadingFooter();
-            loadItems(user, new GetPagedItemsObserver());
+            loadItems(user);
         }
     }
 
-    abstract void loadItems(User user, GetPagedItemsObserver getPagedItemsObserver);
+    abstract void loadItems(User user);
 
     public boolean isLoading() {
         return isLoading;
@@ -78,6 +67,17 @@ public abstract class PagedPresenter<T> extends Presenter<PagedView<T>> {
             setHasMorePages(hasMorePages);
             view.addItems(items);
         }
+
+        @Override
+        String createMessage() {
+            return "paged activity";
+        }
+
+        @Override
+        void handleError() {
+            isLoading = false;
+            view.removeLoadingFooter();
+        }
     }
 
     protected class GetUserObserver extends PresenterObserver implements GetDataObserver<User> {
@@ -91,5 +91,13 @@ public abstract class PagedPresenter<T> extends Presenter<PagedView<T>> {
         public void handleSuccess(User data) {
             view.startActivity(data);
         }
+
+        @Override
+        String createMessage() {
+            return "get user's profile";
+        }
+
+        @Override
+        void handleError() {}
     }
 }

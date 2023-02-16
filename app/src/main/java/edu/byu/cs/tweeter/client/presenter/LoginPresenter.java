@@ -4,12 +4,6 @@ import edu.byu.cs.tweeter.client.presenter.view.StartActivityView;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class LoginPresenter extends AuthenticatePresenter {
-    public interface View {
-        void startActivity(User user);
-
-        void displayMessage(String s);
-    }
-
     public LoginPresenter(StartActivityView view) {
         super(view);
     }
@@ -27,29 +21,13 @@ public class LoginPresenter extends AuthenticatePresenter {
     }
 
     public void login(String alias, String password) {
-        userService.login(alias, password, new AuthenticateObserver());
+        userService.login(alias, password, new LoginObserver());
     }
 
-    @Override
-    String createMessage() {
-        return "login";
+    public class LoginObserver extends AuthenticateObserver {
+        @Override
+        String createMessage() {
+            return "login";
+        }
     }
-
- /*   private class LoginObserver extends PresenterObserver implements AuthenticationObserver {
-        @Override
-        public User getAndSetData(Bundle data) {
-            User loggedInUser = (User) data.getSerializable(LoginTask.USER_KEY);
-            AuthToken authToken = (AuthToken) data.getSerializable(LoginTask.AUTH_TOKEN_KEY);
-
-            // Cache user session information
-            Cache.getInstance().setCurrUser(loggedInUser);
-            Cache.getInstance().setCurrUserAuthToken(authToken);
-            return loggedInUser;
-        }
-
-        @Override
-        public void startActivity(User user) {
-            view.startActivity(user);
-        }
-    }*/
 }

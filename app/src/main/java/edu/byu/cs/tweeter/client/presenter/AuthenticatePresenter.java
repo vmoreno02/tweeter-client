@@ -15,16 +15,6 @@ public class AuthenticatePresenter extends Presenter<StartActivityView> {
         super(view);
     }
 
-    @Override
-    String createMessage() {
-        return null;
-    }
-
-    @Override
-    void handleError() {
-
-    }
-
     protected class AuthenticateObserver extends PresenterObserver implements AuthenticationObserver {
 
         @Override
@@ -41,6 +31,16 @@ public class AuthenticatePresenter extends Presenter<StartActivityView> {
         @Override
         public void startActivity(User user) {
             view.startActivity(user);
+        }
+
+        @Override
+        String createMessage() {
+            return null;
+        }
+
+        @Override
+        void handleError() {
+
         }
     }
 }

@@ -10,12 +10,14 @@ public class StoryPresenter extends PagedStatusPresenter {
     }
 
     @Override
-    String createMessage() {
-        return "get story";
+    void loadItems(User user) {
+        statusService.loadStories(user, PAGE_SIZE, lastItem, new StoryObserver());
     }
 
-    @Override
-    void loadItems(User user, PagedPresenter<Status>.GetPagedItemsObserver getPagedItemsObserver) {
-        statusService.loadStories(user, PAGE_SIZE, lastItem, getPagedItemsObserver);
+    public class StoryObserver extends GetPagedItemsObserver {
+        @Override
+        String createMessage() {
+            return "get story";
+        }
     }
 }
